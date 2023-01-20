@@ -1,3 +1,6 @@
+import mongoose from "mongoose";
+import RequisicaoIncorreta from "../erros/RequisicaoIncorreta.js";
+import NaoEncontrado from "../erros/NaoEncontrado.js";
 import autores from "../models/Autor.js";
 
 class AutorController {
@@ -7,17 +10,23 @@ class AutorController {
     });
   };
 
-  static listarAutorPorId = (req, res) => {
+  static listarAutorPorId = (req, res, next) => {
     const id = req.params.id;
 
-    autores.findById(id, (err, autores) => {
-      if (err) {
-        res
-          .status(400)
-          .send({ message: `${err.message} - Id do Autor não localizado.` });
+    autores.findById(id, (err, autor) => {
+      if (!err) {
+        if (autor !== null) {
+          res.status(200).send(autor);
+        } else {
+          next(new NaoEncontrado());
+        }
       } else {
-        res.status(200).send(autores);
-      }
+        if (err instanceof mongoose.Error.CastError) {
+          next(new RequisicaoIncorreta());
+        } else {
+          next(err);
+        }
+      }      
     });
   };
 

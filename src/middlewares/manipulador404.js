@@ -1,8 +1,7 @@
-function manipulador404(req, res, next) {
-  const erro404 = new Error("Página não encontrada.");
-  erro404.status = 404;
+import NaoEncontrado from "../erros/NaoEncontrado.js";
 
-  next(erro404);
+function manipulador404(req, res, next) {
+  next(new NaoEncontrado());
 }
 
 export default manipulador404;
