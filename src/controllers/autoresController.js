@@ -52,27 +52,45 @@ class AutorController {
     });
   };
 
-  static atualizarAutor = (req, res) => {
+  static atualizarAutor = (req, res, next) => {
     const id = req.params.id;
 
-    autores.findByIdAndUpdate(id, { $set: req.body }, (err) => {
+    autores.findByIdAndUpdate(id,{ $set: req.body },{ runValidators: true },(err, autor) => {
       if (!err) {
-        res.status(200).send({ message: "Autor atualizado com sucesso" });
+        if (autor !== null) {
+          res.status(200).send({ message: "Autor atualizado com sucesso" });
+        } else {
+          next(new NaoEncontrado());
+        }
       } else {
-        res.status(500).send({ message: err.message });
-      }
+        if (err instanceof mongoose.Error.CastError) {
+          next(new RequisicaoIncorreta());
+        } else if (err instanceof mongoose.Error.ValidationError) {
+          next(new ErroValidacao(err.errors));
+        } else {
+          next(err);
+        }
+      } 
     });
   };
 
-  static excluirAutor = (req, res) => {
+  static excluirAutor = (req, res, next) => {
     const id = req.params.id;
 
-    autores.findByIdAndDelete(id, (err) => {
+    autores.findByIdAndDelete(id, (err, autor) => {
       if (!err) {
-        res.status(200).send({ message: "Autor removido com sucesso" });
+        if (autor !== null) {
+          res.status(200).send({ message: "Autor removido com sucesso" });
+        } else {
+          next(new NaoEncontrado());
+        }
       } else {
-        res.status(500).send({ message: err.message });
-      }
+        if (err instanceof mongoose.Error.CastError) {
+          next(new RequisicaoIncorreta());
+        } else {
+          next(err);
+        }
+      } 
     });
   };
 }
