@@ -1,12 +1,18 @@
 import mongoose from "mongoose";
+import autores from "../models/Autor.js";
+
 import RequisicaoIncorreta from "../erros/RequisicaoIncorreta.js";
 import NaoEncontrado from "../erros/NaoEncontrado.js";
-import autores from "../models/Autor.js";
+import ErroValidacao from "../erros/ErroValidacao.js";
 
 class AutorController {
   static listarAutores = (req, res) => {
     autores.find((err, autores) => {
-      res.status(200).json(autores);
+      if (!err) {
+        res.status(200).json(autores);
+      } else {
+        next(err);
+      }
     });
   };
 
@@ -30,16 +36,18 @@ class AutorController {
     });
   };
 
-  static cadastrarAutor = (req, res) => {
+  static cadastrarAutor = (req, res, next) => {
     let autor = new autores(req.body);
 
     autor.save((err) => {
-      if (err) {
-        res
-          .status(500)
-          .send({ message: `${err.message} - falha ao cadastrar Autor.` });
-      } else {
+      if (!err) {
         res.status(201).send(autor.toJSON());
+      } else {
+        if (err instanceof mongoose.Error.ValidationError) {
+          next(new ErroValidacao(err.errors));
+        } else {
+          next(err);
+        }
       }
     });
   };
