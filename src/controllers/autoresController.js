@@ -27,11 +27,7 @@ class AutorController {
           next(new NaoEncontrado());
         }
       } else {
-        if (err instanceof mongoose.Error.CastError) {
-          next(new RequisicaoIncorreta());
-        } else {
-          next(err);
-        }
+        next(err);
       }      
     });
   };
@@ -43,11 +39,7 @@ class AutorController {
       if (!err) {
         res.status(201).send(autor.toJSON());
       } else {
-        if (err instanceof mongoose.Error.ValidationError) {
-          next(new ErroValidacao(err.errors));
-        } else {
-          next(err);
-        }
+        next(err);
       }
     });
   };
@@ -63,13 +55,7 @@ class AutorController {
           next(new NaoEncontrado());
         }
       } else {
-        if (err instanceof mongoose.Error.CastError) {
-          next(new RequisicaoIncorreta());
-        } else if (err instanceof mongoose.Error.ValidationError) {
-          next(new ErroValidacao(err.errors));
-        } else {
-          next(err);
-        }
+        next(err);
       } 
     });
   };
@@ -85,11 +71,7 @@ class AutorController {
           next(new NaoEncontrado());
         }
       } else {
-        if (err instanceof mongoose.Error.CastError) {
-          next(new RequisicaoIncorreta());
-        } else {
-          next(err);
-        }
+        next(err);
       } 
     });
   };
