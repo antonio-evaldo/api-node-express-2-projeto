@@ -1,10 +1,10 @@
 import ErroBase from "./ErroBase.js";
 
 class ErroValidacao extends ErroBase {
-  constructor(erros) {
+  constructor(erros = []) {
     const mensagensErro = Object.values(erros)
       .map((erro) => erro.message)
-      .join("\n");
+      .join("; ");
 
     super(`Os seguintes erros foram encontrados: ${mensagensErro}`, 400);
   }
