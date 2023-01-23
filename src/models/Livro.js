@@ -14,7 +14,7 @@ const livroSchema = new mongoose.Schema({
       values: ["Casa do código", "Alura"],
       message: "A editora {VALUE} especificada não é um valor permitido.`",
     },
-    required: true,
+    required: [true, "A editora é obrigatória."],
   },
   numeroPaginas: {
     type: Number,
