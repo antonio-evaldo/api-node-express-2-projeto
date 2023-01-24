@@ -2,11 +2,14 @@ import mongoose from "mongoose";
 
 const livroSchema = new mongoose.Schema({
   id: { type: String },
-  titulo: { type: String, required: true },
+  titulo: {
+    type: String,
+    required: [true, "Título do livro é obrigatório."]
+  },
   autor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "autores",
-    required: true,
+    required: [true, "Autor(a) é obrigatório."],
   },
   editora: {
     type: String,
@@ -18,14 +21,12 @@ const livroSchema = new mongoose.Schema({
   },
   numeroPaginas: {
     type: Number,
-    min: [
-      10,
-      "O número de páginas deve ser entre 10 e 5000. Número fornecido: {VALUE}",
-    ],
-    max: [
-      5000,
-      "O número de páginas deve ser entre 10 e 5000. Número fornecido: {VALUE}",
-    ],
+    validate: {
+      validator(valor) {
+        return valor >= 10 && valor <= 5000;
+      },
+      message: "O número de páginas deve ser entre 10 e 5000. Número fornecido: {VALUE}"
+    }
   },
 });
 
