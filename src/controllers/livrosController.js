@@ -1,9 +1,5 @@
-import mongoose from "mongoose";
-import livros from "../models/Livro.js";
-
-import ErroValidacao from "../erros/ErroValidacao.js";
+import { livros } from "../models/index.js";
 import NaoEncontrado from "../erros/NaoEncontrado.js";
-import RequisicaoIncorreta from "../erros/RequisicaoIncorreta.js";
 
 class LivroController {
 

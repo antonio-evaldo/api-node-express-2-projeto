@@ -1,9 +1,5 @@
-import mongoose from "mongoose";
-import autores from "../models/Autor.js";
-
-import RequisicaoIncorreta from "../erros/RequisicaoIncorreta.js";
+import { autores } from "../models/index.js";
 import NaoEncontrado from "../erros/NaoEncontrado.js";
-import ErroValidacao from "../erros/ErroValidacao.js";
 
 class AutorController {
   static listarAutores = (req, res) => {
