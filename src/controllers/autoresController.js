@@ -2,7 +2,7 @@ import { autores } from "../models/index.js";
 import NaoEncontrado from "../erros/NaoEncontrado.js";
 
 class AutorController {
-  static listarAutores = (req, res) => {
+  static listarAutores = (req, res, next) => {
     autores.find((err, autores) => {
       if (!err) {
         res.status(200).json(autores);

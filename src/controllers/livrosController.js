@@ -3,7 +3,7 @@ import NaoEncontrado from "../erros/NaoEncontrado.js";
 
 class LivroController {
 
-  static listarLivros = (req, res) => {
+  static listarLivros = (req, res, next) => {
     livros.find()
       .populate('autor')
       .exec((err, livros) => {
@@ -77,7 +77,7 @@ class LivroController {
     })
   }
 
-  static listarLivroPorEditora = (req, res) => {
+  static listarLivroPorEditora = (req, res, next) => {
     const editora = req.query.editora
 
     livros.find({'editora': editora}, {}, (err, livros) => {
