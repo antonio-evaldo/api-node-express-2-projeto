@@ -80,13 +80,23 @@ class LivroController {
   static listarLivroPorEditora = (req, res, next) => {
     const editora = req.query.editora
 
-    livros.find({'editora': editora}, {}, (err, livros) => {
-      if (!err) {
-        res.status(200).send(livros);
-      } else {
-        next(err);
+    livros.find(
+      {
+        editora: {
+          $regex: editora,
+          $options: "i"
+        }
+      },
+      {},
+      (err, livros) => {
+        if (!err) {
+          res.status(200).send(livros);
+        } else {
+          console.log(err);
+          next(err);
+        }
       }
-    })
+    )
   }
 }
 
