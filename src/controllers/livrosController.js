@@ -78,15 +78,18 @@ class LivroController {
   }
 
   static listarLivroPorEditora = (req, res, next) => {
-    const editora = req.query.editora
+    const { editora, minPaginas, maxPaginas } = req.query;
+
+    let busca = {};
+
+    if (editora) busca.editora = { $regex: editora, $options: "i" };
+
+    if (minPaginas || maxPaginas) busca.numeroPaginas = {};
+    if (minPaginas) busca.numeroPaginas.$gte = minPaginas;
+    if (maxPaginas) busca.numeroPaginas.$lte = maxPaginas;
 
     livros.find(
-      {
-        editora: {
-          $regex: editora,
-          $options: "i"
-        }
-      },
+      busca,
       {},
       (err, livros) => {
         if (!err) {
