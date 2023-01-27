@@ -4,22 +4,21 @@ import NaoEncontrado from "../erros/NaoEncontrado.js";
 class LivroController {
 
   static listarLivros = (req, res, next) => {
-    livros.find()
-      .populate('autor')
-      .exec((err, livros) => {
-        if (!err) {
-          res.status(200).json(livros);
-        } else {
-          next(err);
-        }
+    livros.find((err, livros) => {
+      if (!err) {
+        res.status(200).json(livros);
+      } else {
+        next(err);
+      }
   })
   }
 
   static listarLivroPorId = (req, res, next) => {
     const id = req.params.id;
 
-    livros.findById(id)
-      .populate('autor', 'nome')
+    livros
+      .findById(id, {}, { autopopulate: false })
+      .populate('autor')
       .exec((err, livro) => {
         if (!err) {
           if (livro !== null) {
