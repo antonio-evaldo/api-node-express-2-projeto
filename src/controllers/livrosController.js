@@ -5,8 +5,16 @@ class LivroController {
 
   static listarLivros = async (req, res, next) => {
     try {
-      const resultado = await livros.find();
-      res.status(200).json(resultado);
+      let { pagina = 1, limite = 5 } = req.query;
+
+      if (pagina < 1) pagina = 1;
+      if (limite < 1) limite = 5;
+
+      const resultadoLivros = await livros.find()
+        .skip((pagina - 1) * limite)
+        .limit(limite);
+
+      res.status(200).json(resultadoLivros);
     } catch (err) {
       next(err);
     }
