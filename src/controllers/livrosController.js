@@ -1,25 +1,23 @@
-import { livros } from "../models/index.js";
+import { autores, livros } from "../models/index.js";
 import NaoEncontrado from "../erros/NaoEncontrado.js";
 
 class LivroController {
 
-  static listarLivros = (req, res) => {
-    livros.find()
-      .populate('autor')
-      .exec((err, livros) => {
-        if (!err) {
-          res.status(200).json(livros);
-        } else {
-          next(err);
-        }
-  })
+  static listarLivros = async (req, res, next) => {
+    try {
+      const resultado = await livros.find();
+      res.status(200).json(resultado);
+    } catch (err) {
+      next(err);
+    }
   }
 
   static listarLivroPorId = (req, res, next) => {
     const id = req.params.id;
 
-    livros.findById(id)
-      .populate('autor', 'nome')
+    livros
+      .findById(id, {}, { autopopulate: false })
+      .populate('autor')
       .exec((err, livro) => {
         if (!err) {
           if (livro !== null) {
@@ -77,17 +75,44 @@ class LivroController {
     })
   }
 
-  static listarLivroPorEditora = (req, res) => {
-    const editora = req.query.editora
-
-    livros.find({'editora': editora}, {}, (err, livros) => {
-      if (!err) {
-        res.status(200).send(livros);
+  static listarLivroPorEditora = async (req, res, next) => {
+    try {
+      const busca = await processaBusca(req.query);
+  
+      if (busca) {
+        const livro = await livros.find(busca);
+        res.status(200).send(livro);
       } else {
-        next(err);
+        res.status(200).send([]);
       }
-    })
+    } catch (err) {
+      next(err);
+    }
   }
+}
+
+async function processaBusca({ editora, minPaginas, maxPaginas, nomeAutor }) {
+  let buscaLivro = {};
+
+  if (editora) buscaLivro.editora = { $regex: editora, $options: "i" };
+
+  if (minPaginas || maxPaginas) buscaLivro.numeroPaginas = {};
+  if (minPaginas) buscaLivro.numeroPaginas.$gte = minPaginas;
+  if (maxPaginas) buscaLivro.numeroPaginas.$lte = maxPaginas;
+
+  if (nomeAutor) {
+    const autor = await autores.findOne(
+      { nome: { $regex: nomeAutor, $options: "i" } }
+    );
+
+    if (autor) {
+      buscaLivro.autor = autor._id;
+    } else {
+      buscaLivro = null;
+    }
+  }
+
+  return buscaLivro;
 }
 
 export default LivroController
