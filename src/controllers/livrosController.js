@@ -5,12 +5,13 @@ class LivroController {
 
   static listarLivros = async (req, res, next) => {
     try {
-      let { pagina = 1, limite = 5 } = req.query;
+      let { pagina = 1, limite = 5, campoOrdenacao = "_id", ordem = -1 } = req.query;
 
       if (pagina < 1) pagina = 1;
       if (limite < 1) limite = 5;
 
       const resultadoLivros = await livros.find()
+        .sort({ [campoOrdenacao]: ordem })
         .skip((pagina - 1) * limite)
         .limit(limite);
 
