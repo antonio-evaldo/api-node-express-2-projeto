@@ -3,13 +3,14 @@ import NaoEncontrado from "../erros/NaoEncontrado.js";
 
 class AutorController {
   static listarAutores = (req, res, next) => {
-    autores.find((err, autores) => {
-      if (!err) {
-        res.status(200).json(autores);
-      } else {
-        next(err);
-      }
-    });
+    try {
+      req.resultado = autores.find();
+      
+      next();
+    } catch (err) {
+      next(err);
+    }
+    ;
   };
 
   static listarAutorPorId = (req, res, next) => {
